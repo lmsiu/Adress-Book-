@@ -143,7 +143,52 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 
 Status search_contact(AddressBook *address_book)
 {
-	/* Add the functionality for search contacts here */
+   char * quitMsg = "Press: [q] | Cancel: ";
+
+   //Create a search menu
+	menu_header("Search contact by:\n");
+   printf("0. Back\n");
+   printf("1. Name\n");
+   printf("2. Phone No\n");
+   printf("3. Email ID\n");
+   printf("4. Serial No\n\n");
+
+   //Get user's choice
+   int searchOption = get_option(NUM, "Please select an option: ");
+
+   //React to user choice
+   if (searchOption == 0)
+      return e_back;
+   else if (searchOption == NAME)
+   {
+      printf("Enter the Name: ");
+      char * name;
+      scanf("%s", &name);
+      return search(name, address_book, 0, NAME, quitMsg, e_search);
+   }
+   else if (searchOption == NUMBER)
+   {
+      printf("Enter the Phone Number: ");
+      char * number;
+      scanf("%s", number);
+      return search(number, address_book, 0, NUMBER, quitMsg, e_search);
+   }
+   else if (searchOption == EMAIL)
+   {
+      printf("Enter the Email ID: ");
+      char * email;
+      scanf("%s", email);
+      return search(email, address_book, 0, EMAIL, quitMsg, e_search);
+   }
+   else if (searchOption == SERIAL)
+   {
+      printf("Enter the Serial Number: ");
+      unsigned int sno;
+      scanf("%d", &sno);
+      return search(sno, address_book, 0, SERIAL, quitMsg, e_search);
+   }
+   else
+      return e_fail;
 }
 
 Status edit_contact(AddressBook *address_book)
