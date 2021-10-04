@@ -8,6 +8,8 @@
 #include "abk_log.h"
 #include "abk_menus.h"
 #include "abk.h"
+#include "address_book.h"
+#include "address_book_menu.h"
 
 int get_option(int type, const char *msg)
 {
@@ -138,7 +140,108 @@ Status add_contacts(AddressBook *address_book)
 
 Status search(const char *str, AddressBook *address_book, int loop_count, int field, const char *msg, Modes mode)
 {
-	/* Add the functionality for adding contacts here */
+	menu_header("Search Result:\n");
+
+   //Print column names
+   for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
+      printf("=");
+   printf("\n: S.No : Name");
+   for (int spaces = 0; spaces < 33 - 5; spaces++)
+      printf(" ");
+   printf(": Phone No");
+   for (int spaces = 0; spaces < 33 - 9; spaces++)
+      printf(" ");
+   printf(": Email ID                     :\n");
+   for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
+      printf("=");
+
+   //Get start and end point for search
+   ContactInfo * ptrToPeople = address_book->list;
+   ContactInfo * endPtr = ptrToPeople + address_book->count;
+   unsigned int foundPeople = 0;
+
+   for (ptrToPeople; ptrToPeople < endPtr; ptrToPeople++)
+   {
+      if (compareFields(field, str, ptrToPeople) == 0)
+      {
+         foundPeople++;
+         printf("\n: %d", ptrToPeople.si_no);
+
+         //A little thing to keep the format nice
+         short lengthOfSerial = 2; //Includes the one digit and one space
+         int serial = ptrToPeople.si_no;
+         while (serial > 10)
+         {
+            serial /= 10;
+            lengthOfSerial++;
+         }
+         for (int spaces = 0; spaces < 6 - lengthOfSerial; spaces++)
+            printf(" ");
+
+         //Print name
+         printf(": %s", ptrToPeople.name);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.name); spaces++)
+            printf(" ");
+         
+         //Print phone number 1
+         printf(": %s", ptrToPeople.phone_numbers[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[0]); spaces++)
+            printf(" ");
+
+         //Print email 1
+         printf(": %s", ptrToPeople.email_addresses[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[0]); spaces++)
+            printf(" ");
+         printf(":\n");
+
+         //Print remaining emails and phone numbers
+         for (int infoLine = 1; infoLine < PHONE_NUMBER_COUNT; infoLine++) //Condition will need changing if PHONE_NUMBER_COUNT is ever not equal to EMAIL_ID_COUNT
+         {
+            printf(":      :                                 : %s", ptrToPeople.phone_numbers[infoLine]); // Will need changing if contacts can ever have multiple names/serial numbers
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[infoLine]); spaces++)
+               printf(" ");
+            printf(": %s", ptrToPeople.email_addresses[infoLine]);
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[infoLine]); spaces++)
+               printf(" ");
+            printf(":\n");
+         }
+         for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
+            printf("=");
+      }
+   }
+   printf("%s", msg);
+   if (foundPeople > 0)
+      return e_succes;
+   else if (foundPeople < 0)
+      return e_fail;
+   return e_no_match;
+}
+
+//Allows for an easy comparison in search()
+static int compareFields(int field, const char * toCheck, ContactInfo * contact)
+{
+   switch (field)
+   {
+      case NAME:
+         return strcmp(toCheck, contact->name[0]);
+      case NUMBER:
+         for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
+         {
+            if (strcmp(toCheck, contact->phone_numbers[phone]) == 0)
+               return 0;
+         }
+         return 1;
+      case EMAIL:
+         for (int email = 0; email < EMAIL_ID_COUNT; email++)
+         {
+            if (strcmp(toCheck, contact->email_addresses[email]) == 0)
+               return 0;
+         }
+         return 1;
+      case SERIAL:
+         return atoi(toCheck) != contact->si_no;
+   }
+   return -1;
 }
 
 Status search_contact(AddressBook *address_book)
@@ -183,8 +286,8 @@ Status search_contact(AddressBook *address_book)
    else if (searchOption == SERIAL)
    {
       printf("Enter the Serial Number: ");
-      unsigned int sno;
-      scanf("%d", &sno);
+      char * sno;
+      scanf("%s", &sno);
       return search(sno, address_book, 0, SERIAL, quitMsg, e_search);
    }
    else
