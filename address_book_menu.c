@@ -142,7 +142,61 @@ Status menu(AddressBook *address_book)
 
 Status add_contacts(AddressBook *address_book)
 {
-	/* Add the functionality for adding contacts here */
+   struct ContactInfo newContact;
+   char userName[NAME_LEN];
+   int phoneNumCount;
+   char tempPhoneNum[NUMBER_LEN];
+   int emailCount;
+   char tempEmail[EMAIL_ID_LEN];
+
+   //prompt user for new contact name
+   printf("Please input the name of your new contact: ");
+   scanf("%s\n",userName);
+   strcpy(newContact.name, userName);
+   printf("New contact: %s\n", newContact.name);
+
+   //prompt user for phone number(s) (maybe ask how many? if >1, use a while loop or goto label with a phone# count var)
+   printf("How many phone numbers would you like to add for %s? ", userName);
+   scanf("%i", phoneNumCount);
+   
+   while(phoneNumCount > 5 || phoneNumCount < 0){
+      printf("Error! You may only input up to 5 phone numbers for your new contact.");
+      printf("Please reenter the amount of phone numbers you would like to add for %s: "userName);
+      scanf("%i", phoneNumCount);
+   }
+   
+   for(int i=1; i <= phoneNumCount; i++){
+      printf("Please enter phone number %i: ", i);
+      scanf("%s", tempPhoneNum);
+      strcpy(contactInfo.phone_numbers[i-1], tempPhoneNum);
+   }
+
+   //prompt user for email address(es)
+   printf("How many email addresses would you like to add for %s? ", userName);
+   scanf("%i", emailCount);
+   
+   while(emailCount > 5 || emailCount < 0){
+      printf("Error! You may only input up to 5 email addresses for your new contact.");
+      printf("Please reenter the number of email addresses you would like to add for %s: "userName);
+      scanf("%i", emailCount);
+   }
+   
+   for(int i=1; i <= emailCount; i++){
+      printf("Please enter email address %i: ", i);
+      scanf("%s", tempEmail);
+      strcpy(contactInfo.email_addresses[i-1], tempEmail);
+   }
+
+   //save new ContactInfo struct to list var in address_book struct
+   addressbook -> list
+
+   //increase count by 1
+   int tempCount = addressbook -> count;
+   tempCount++;
+   addressbook -> count = tempCount;
+
+   //return success status (+ any other applicable Status enums)
+   return e_success;
 }
 
 Status search(const char *str, AddressBook *address_book, int loop_count, int field, const char *msg, Modes mode)
