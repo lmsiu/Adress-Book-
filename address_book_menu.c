@@ -1,20 +1,19 @@
 #include <stdio.h>
-#include <stdio_ext.h>
+// #include <stdio_ext.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "abk_fileops.h"
-#include "abk_log.h"
-#include "abk_menus.h"
-#include "abk.h"
+// #include "abk_fileops.h"
+// #include "abk_log.h"
+// #include "abk_menus.h"
+// #include "abk.h"
 #include "address_book.h"
 #include "address_book_menu.h"
 
 int get_option(int type, const char *msg)
 {
 	printf("%s", msg);
-   
    switch (type)
    {
       case NUM:
@@ -72,7 +71,7 @@ void menu_header(const char *str)
 	system("clear");
 
 	printf("#######  Address Book  #######\n");
-	if (str != '\0')
+	if (*str != '\0')
 	{
 		printf("#######  %s\n", str);
 	}
@@ -306,7 +305,59 @@ Status search_contact(AddressBook *address_book)
 
 Status edit_contact(AddressBook *address_book)
 {
-	/* Add the functionality for edit contacts here */
+		/* Add the functionality for edit contacts here */
+   char stringToChange[32] = "";
+   int newNum;
+   ContactInfo * contactToEdit;
+//    Status endStat;
+   ContactInfo ci;
+
+   printf("Which contact would you like to edit?\n");
+   //need to have this be a pointer to a ContactInfo
+   //will update with searchContact
+   contactToEdit = &ci;
+
+   printf("What would you like to change the name to?\n");
+   scanf("%s", stringToChange);
+   //NAME_COUNT subject to change to NAME_LEN
+   // printf("in strcpy");
+   
+   for(int n = 0; n < NAME_COUNT; n++){
+      //source string subject to change to stringToChange[n]
+      strcpy(contactToEdit->name[n], stringToChange);
+      // printf("Changing name");
+
+   }
+   printf("New in contact %s\n", contactToEdit->name[0]);
+   printf("New string %s\n", stringToChange);
+   
+
+   printf("What would you like to change the phone number to?\n");
+   scanf("%s", stringToChange);
+   for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
+   {
+      //source string is subject to change to stringToChange[phone]
+      strcpy(contactToEdit->phone_numbers[phone], stringToChange);
+   }
+   printf("New in contact %s\n", contactToEdit->phone_numbers[0]);
+   printf("New string %s\n", stringToChange);
+   
+
+   printf("What would you like to change the email adress to?\n");
+   scanf("%s", stringToChange);
+   for(int email = 0; email < EMAIL_ID_COUNT; email++){
+      strcpy(contactToEdit->email_addresses[email], stringToChange);
+   }
+   printf("New in contact %s\n", contactToEdit->email_addresses[0]);
+   printf("New string %s\n", stringToChange);
+
+   printf("What would you like to change the sireal number to?\n");
+   scanf("%d\n", &newNum);
+   contactToEdit->si_no = newNum;
+
+   return e_success;
+
+
 }
 
 Status delete_contact(AddressBook *address_book)
