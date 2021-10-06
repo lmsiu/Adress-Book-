@@ -364,3 +364,16 @@ Status delete_contact(AddressBook *address_book)
 {
 	/* Add the functionality for delete contacts here */
 }
+
+//Gets the pointer to a contact, useful for deleting and editing
+*ContactInfo getContactAddress(AddressBook *addBook, int sno)
+{
+   ContactInfo * ptr = addBook->list;
+   ContactInfo * endPtr = addBook->list + addBook->count;
+   for (; ptr < endPtr; ptr++)
+   {
+      if (ptr.si_no == sno)
+         return ptr;
+   }
+   return NULL;
+}
