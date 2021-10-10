@@ -298,7 +298,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
    }
    printf("%s", msg);
    if (foundPeople > 0)
-      return e_succes;
+      return e_success;
    else if (foundPeople < 0)
       return e_fail;
    return e_no_match;
