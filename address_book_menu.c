@@ -115,7 +115,7 @@ Status menu(AddressBook *address_book)
 		switch (option)
 		{
 			case e_add_contact:
-				/* Add your implementation to call add_contacts function here */
+				add_contacts(address_book);
 				break;
 			case e_search_contact:
 				search_contact(address_book);
@@ -127,8 +127,8 @@ Status menu(AddressBook *address_book)
 				delete_contact(address_book);
 				break;
 			case e_list_contacts:
-				break;
 				/* Add your implementation to call list_contacts function here */
+            break;
 			case e_save:
 				save_file(address_book);
 				break;
@@ -148,6 +148,20 @@ Status add_contacts(AddressBook *address_book)
    char tempPhoneNum[NUMBER_LEN];
    int emailCount;
    char tempEmail[EMAIL_ID_LEN];
+
+   //user menu
+   add_menu();
+
+   int searchOption = get_option(NUM, "Please select an option: ");
+
+   if(searchOption == 0){
+      return e_back;
+   }
+
+
+
+
+
 
    //prompt user for new contact name
    printf("Please input the name of your new contact: ");
@@ -190,8 +204,9 @@ Status add_contacts(AddressBook *address_book)
    }
 
    //save new ContactInfo struct to list var in address_book struct
-   //address_book -> list;
-
+   address_book -> list = realloc(address_book->list, (sizeof(address_book->list)+sizeof(ContactInfo*)));
+   ContactInfo* insertPtr = address_book->list + sizeof(address_book->list) - sizeof(ContactInfo*);
+   *insertPtr = &newContact;
 
    //increase count by 1
    address_book -> count = (address_book -> count) + 1;
@@ -199,6 +214,16 @@ Status add_contacts(AddressBook *address_book)
    //return success status (+ any other applicable Status enums)
    return e_success;
 }
+
+int add_menu(){
+   menu_header("Add Contact:\n");
+   printf("0. Back\n");
+   printf("1. Name: \n");
+   printf("2. Phone Number 1: \n");
+   printf("3. Email Address 1: \n");
+   return 0;
+}
+
 
 Status search(const char *str, AddressBook *address_book, int loop_count, int field, const char *msg, Modes mode)
 {
