@@ -307,53 +307,115 @@ Status edit_contact(AddressBook *address_book)
 {
 		/* Add the functionality for edit contacts here */
    char stringToChange[32] = "";
-   int newNum;
+   int sino;
+   char yn;
+
    ContactInfo * contactToEdit;
-//    Status endStat;
-   ContactInfo ci;
+   int indexToChange;
+
+   ContactInfo ci; //tester
+
+   char * quitMsg = "Press: [q] | Cancel: ";
 
    printf("Which contact would you like to edit?\n");
+   search_contact(address_book); //uses search contact to search and print contact
+
+   printf("Please enter the serial number of the contact\n");
+   scanf("%d", sino);
+
+   // contactToEdit= getContactAddress(address_book, sino);
    //need to have this be a pointer to a ContactInfo
-   //will update with searchContact
    contactToEdit = &ci;
 
-   printf("What would you like to change the name to?\n");
-   scanf("%s", stringToChange);
-   //NAME_COUNT subject to change to NAME_LEN
-   // printf("in strcpy");
-   
-   for(int n = 0; n < NAME_COUNT; n++){
-      //source string subject to change to stringToChange[n]
-      strcpy(contactToEdit->name[n], stringToChange);
-      // printf("Changing name");
+   menu_header("Edit contact by:\n");
+   printf("0. Back\n");
+   printf("1. Name\n");
+   printf("2. Phone No\n");
+   printf("3. Email ID\n");
 
-   }
-   printf("New in contact %s\n", contactToEdit->name[0]);
-   printf("New string %s\n", stringToChange);
-   
+   //Get user's choice
+   int searchOption = get_option(NUM, "Please select an option: ");
 
-   printf("What would you like to change the phone number to?\n");
-   scanf("%s", stringToChange);
-   for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
+   //React to user choice
+   if (searchOption == 0)
+      return e_back;
+   else if (searchOption == NAME)
    {
-      //source string is subject to change to stringToChange[phone]
-      strcpy(contactToEdit->phone_numbers[phone], stringToChange);
-   }
-   printf("New in contact %s\n", contactToEdit->phone_numbers[0]);
-   printf("New string %s\n", stringToChange);
-   
+      printf("What would you like to change the name to?\n ");
+      scanf("%s", &stringToChange);
+      strcpy(contactToEdit->name[0], stringToChange);
+      printf("New name: %s", contactToEdit->name[0]);
 
-   printf("What would you like to change the email adress to?\n");
-   scanf("%s", stringToChange);
-   for(int email = 0; email < EMAIL_ID_COUNT; email++){
-      strcpy(contactToEdit->email_addresses[email], stringToChange);
-   }
-   printf("New in contact %s\n", contactToEdit->email_addresses[0]);
-   printf("New string %s\n", stringToChange);
+   } else if (searchOption == NUMBER) {
 
-   printf("What would you like to change the sireal number to?\n");
-   scanf("%d\n", &newNum);
-   contactToEdit->si_no = newNum;
+      printf("Would you like to change a phone number? (y/n)\n");
+      scanf("%c", &yn);
+
+      while(yn == 'y' || yn =='Y'){
+      printf("Which phone number would you like to change?\n");
+      for(int i = 0; i<PHONE_NUMBER_COUNT; i++){
+         printf("Name: %s, Phone number %d: %s\n", contactToEdit->name, i+1, contactToEdit->phone_numbers[i]);
+      }
+      scanf("%d", &indexToChange); //input will be 1 greater than the index
+
+      printf("What would you like to change the phone number to?\n");
+      scanf("%s", stringToChange);
+
+      strcpy(contactToEdit->phone_numbers[indexToChange - 1], stringToChange);
+
+      printf("Updated phone numbers: \n");
+      for(int i = 0; i<PHONE_NUMBER_COUNT; i++){
+         printf("Name: %s, Phone number %d: %s\n", contactToEdit->name, i+1, contactToEdit->phone_numbers[i]);
+      }
+
+      printf("New string %s\n", stringToChange);
+
+      printf("Would you like to change another phone number? (y/n)\n");
+
+      getchar();
+      scanf("%c%*c", &yn);
+
+      }
+
+   } else if (searchOption == EMAIL) {
+      printf("Would you like to change an email address? (y/n)\n");
+      scanf("%c", &yn);
+
+      while(yn == 'y' || yn =='Y'){
+      printf("Which email address would you like to change?\n");
+      for(int i = 0; i<EMAIL_ID_COUNT; i++){
+         printf("Name: %s, Email address %d: %s\n", contactToEdit->name[0], i+1, contactToEdit->email_addresses[i]);
+      }
+      scanf("%d", &indexToChange); //input will be 1 greater than the index
+
+      printf("What would you like to change the email address to?\n");
+      scanf("%s", stringToChange);
+
+      strcpy(contactToEdit->email_addresses[indexToChange - 1], stringToChange);
+
+      printf("Updated phone numbers: \n");
+      for(int i = 0; i<EMAIL_ID_COUNT; i++){
+         printf("Name: %s, Email address %d: %s\n", contactToEdit->name[0], i+1, contactToEdit->email_addresses[i]);
+      }
+
+      printf("New string %s\n", stringToChange);
+
+      printf("Would you like to change another email address? (y/n)\n");
+
+      getchar();
+      scanf("%c%*c", &yn);
+      }
+
+   }
+   else{
+      return e_fail;
+   }
+
+   char opt = get_option(CHAR, "");
+
+   if (opt == 'q'){
+      return e_back;
+   }
 
    return e_success;
 
