@@ -1,13 +1,13 @@
 #include <stdio.h>
-#include <stdio_ext.h>
+//#include <stdio_ext.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "abk_fileops.h"
-#include "abk_log.h"
-#include "abk_menus.h"
-#include "abk.h"
+//#include "abk_fileops.h"
+//#include "abk_log.h"
+//#include "abk_menus.h"
+//#include "abk.h"
 #include "address_book.h"
 #include "address_book_menu.h"
 
@@ -140,67 +140,77 @@ Status menu(AddressBook *address_book)
 	return e_success;
 }
 
+int add_menu(ContactInfo* newContact, int phoneNumCount, int emailCount){
+   menu_header("Add Contact:\n");
+   printf("0. Back\n");
+   printf("1. Name: %s\n", newContact->name[0]);
+   printf("2. Phone Number 1: %s\n", newContact->phone_numbers[0]);
+   for(int i = 1; i<=phoneNumCount-1; i++){
+      printf("   Phone Number %i: %s\n", i, newContact->phone_numbers[i]);
+   }
+   printf("3. Email Address 1: %s\n", newContact->email_addresses[0]);
+   for(int k = 1; k<=phoneNumCount-1; k++){
+      printf("   Email Address %i: %s\n", k, newContact->email_addresses[k]);
+   }
+   return 0;
+}
+
 Status add_contacts(AddressBook *address_book)
 {
    ContactInfo newContact;
+   int contactCreated = 0;
    char userName[NAME_LEN];
-   int phoneNumCount;
+   int phoneNumCount = 0;
    char tempPhoneNum[NUMBER_LEN];
-   int emailCount;
+   int emailCount = 0;
    char tempEmail[EMAIL_ID_LEN];
+   int searchOption;
 
    //user menu
-   add_menu();
+   selection:
+   add_menu(&newContact, phoneNumCount, emailCount);
 
-   int searchOption = get_option(NUM, "Please select an option: ");
+   optionError:
+   searchOption = get_option(NUM, "Please select an option: ");
 
    if(searchOption == 0){
+      goto quit;
+   } else if(searchOption == NAME){
+      printf("Please input the name of your new contact: ");
+      scanf("%s", userName);
+      strcpy(newContact.name[0], userName);
+      contactCreated = 1;
+   } else if(searchOption == NUMBER){
+      phoneNumCount++;
+      if(phoneNumCount > 5){
+         printf("Error! You may only input up to 5 phone numbers for your new contact. \n");
+         phoneNumCount--;
+      }else{
+         printf("Please enter phone number %i (without hyphens or parentheses): ", phoneNumCount);
+         scanf("%s", tempPhoneNum);
+         strcpy(newContact.phone_numbers[phoneNumCount-1], tempPhoneNum);
+      }
+   } else if(searchOption == EMAIL){
+      emailCount++;
+      if(emailCount > 5){
+         printf("Error! You may only input up to 5 email addresses for your new contact. \n");
+         emailCount--;
+      }else{
+         printf("Please enter email address %i: ", emailCount);
+         scanf("%s", tempEmail);
+         strcpy(newContact.email_addresses[emailCount-1], tempEmail);
+      
+      }
+   } else{
+      printf("Error! Please select a number from 0 to 3.\n");
+      goto optionError;
+   }
+   goto selection;
+
+   quit:
+   //no contact was created, so quit "Add Contact" menu without saving newContact struct
+   if(contactCreated == 0){
       return e_back;
-   }
-
-
-
-
-
-
-   //prompt user for new contact name
-   printf("Please input the name of your new contact: ");
-   scanf("%s", userName);
-   strcpy(newContact.name[0], userName);
-   printf("New contact: %s\n", newContact.name[0]);
-
-   //prompt user for phone number(s)
-   printf("How many phone numbers would you like to add for %s? ", userName);
-   scanf("%i", &phoneNumCount);
-   
-   while(phoneNumCount > 5 || phoneNumCount < 0){
-      printf("Error! You may only input up to 5 phone numbers for your new contact. ");
-      printf("Please reenter the amount of phone numbers you would like to add for %s: ", userName);
-      scanf("%i", &phoneNumCount);
-   }
-   
-   for(int i=1; i <= phoneNumCount; i++){
-      printf("Please enter phone number %i (without hyphens or parentheses): ", i);
-      scanf("%s", tempPhoneNum);
-      strcpy(newContact.phone_numbers[i-1], tempPhoneNum);
-      //printf("Phone %i: %s\n", i, newContact.phone_numbers[i-1]);
-   }
-
-   //prompt user for email address(es)
-   printf("How many email addresses would you like to add for %s? ", userName);
-   scanf("%i", &emailCount);
-   
-   while(emailCount > 5 || emailCount < 0){
-      printf("Error! You may only input up to 5 email addresses for your new contact. ");
-      printf("Please reenter the number of email addresses you would like to add for %s: ", userName);
-      scanf("%i", &emailCount);
-   }
-   
-   for(int i=1; i <= emailCount; i++){
-      printf("Please enter email address %i: ", i);
-      scanf("%s", tempEmail);
-      strcpy(newContact.email_addresses[i-1], tempEmail);
-      //printf("Email address %i: %s\n", i, newContact.email_addresses[i-1]);
    }
 
    //save new ContactInfo struct to list var in address_book struct
@@ -214,16 +224,6 @@ Status add_contacts(AddressBook *address_book)
    //return success status (+ any other applicable Status enums)
    return e_success;
 }
-
-int add_menu(){
-   menu_header("Add Contact:\n");
-   printf("0. Back\n");
-   printf("1. Name: \n");
-   printf("2. Phone Number 1: \n");
-   printf("3. Email Address 1: \n");
-   return 0;
-}
-
 
 Status search(const char *str, AddressBook *address_book, int loop_count, int field, const char *msg, Modes mode)
 {
