@@ -98,7 +98,7 @@ void main_menu(void)
 
 Status menu(AddressBook *address_book)
 {
-	struct Contact backup;
+	struct ContactInfo backup;
 	Status ret;
 	int option;
 
@@ -166,8 +166,8 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
       printf("=");
 
    //Get start and end point for search
-   struct Contact * ptrToPeople = address_book->list;
-   struct Contact * endPtr = ptrToPeople + address_book->count;
+   struct ContactInfo * ptrToPeople = address_book->list;
+   struct ContactInfo * endPtr = ptrToPeople + address_book->count;
    unsigned int foundPeople = 0;
 
    for (ptrToPeople; ptrToPeople < endPtr; ptrToPeople++)
@@ -228,7 +228,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 }
 
 //Allows for an easy comparison in search()
-static int compareFields(int field, const char * toCheck, struct Contact * contact)
+static int compareFields(int field, const char * toCheck, struct ContactInfo * contact)
 {
    switch (field)
    {
@@ -314,10 +314,10 @@ Status edit_contact(AddressBook *address_book)
    int sino;
    char yn;
 
-   struct Contact * contactToEdit;
+   struct ContactInfo * contactToEdit;
    int indexToChange;
 
-   struct Contact ci; //tester
+   struct ContactInfo ci; //tester
 
    char * quitMsg = "Press: [q] | Cancel: ";
 
@@ -432,10 +432,10 @@ Status delete_contact(AddressBook *address_book)
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
-struct Contact * getContactAddress(AddressBook *addBook, int sno)
+ struct ContactInfo* getContactAddress(AddressBook *addBook, int sno)
 {
-   struct Contact * ptr = addBook->list;
-   struct Contact * endPtr = addBook->list + addBook->count;
+   struct ContactInfo * ptr = addBook->list;
+   struct ContactInfo * endPtr = addBook->list + addBook->count;
    for (; ptr < endPtr; ptr++)
    {
       if (ptr->si_no == sno)
