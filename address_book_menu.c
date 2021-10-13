@@ -17,15 +17,21 @@ int get_option(int type, const char *msg)
    switch (type)
    {
       case NUM:
+      {
          int opt;
          scanf("%d", &opt);
          return opt;
+      }
       case CHAR:
+      {
          char opt;
          scanf("%c", &opt);
          return opt;
+      }
       case NONE:
+      {
          return e_no_opt;
+      }
    }
 }
 
@@ -217,7 +223,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
    }
    printf("%s", msg);
    if (foundPeople > 0)
-      return e_succes;
+      return e_success;
    else if (foundPeople < 0)
       return e_fail;
    return e_no_match;
@@ -362,7 +368,119 @@ Status edit_contact(AddressBook *address_book)
 
 Status delete_contact(AddressBook *address_book)
 {
-	/* Add the functionality for delete contacts here */
+   /* Add the functionality for delete contacts here */
+   int userChoice;
+   char userOpt;
+   int chosenSNo;
+   Status endStat2;
+   char * quitMsg = "Press: [q] | Cancel: ";
+
+   start:
+   /* Prints to console options*/
+   printf("Search Contact to Delete by:\n");
+   printf("0. Back\n");
+   printf("1. Name\n");
+   printf("2. Phone No\n");
+   printf("3. Email ID\n");
+   printf("4. Serial No\n\n");
+
+   redo:
+   userChoice = get_option(NUM, "Please select an option: ");
+   /*Modifies search_contact function and creates a switch used to decide who to look up and how using users input*/
+   switch(userChoice){
+      case NONE:
+      goto end;   //ends function returning to main menu
+      break;
+      case NAME :
+         /* searches by name */
+         printf("Enter the Name: ");
+         char * name;
+         scanf("%s", &name);
+         endStat2 = search(name, address_book, 0, NAME, quitMsg, e_search);
+         break;
+      case NUMBER :
+         /* searches by number */
+         printf("Enter the Phone Number: ");
+         char * number;
+         scanf("%s", number);
+         endStat2 = search(number, address_book, 0, NUMBER, quitMsg, e_search);
+         break;
+      case EMAIL :
+         /* searches by email */
+         printf("Enter the Email ID: ");
+         char * email;
+         scanf("%s", email);
+         endStat2 = search(email, address_book, 0, EMAIL, quitMsg, e_search);
+         break;
+      case SERIAL :
+         /* searches by serial number */
+         printf("Enter the Serial Number: ");
+         char * sno;
+         scanf("%s", &sno);
+         endStat2 = search(sno, address_book, 0, SERIAL, quitMsg, e_search);
+         break;
+      default :
+         /* didn't choose a given option */
+         printf("Please choose a valid option. \n");
+         goto redo; //reattempts to ask user for a valid option
+   }
+
+   /*Switch used to decide whether to go back to the very start, continue with deletion, or prompt user for a valid option*/
+   while (userOpt != 's' && userOpt != 'q')
+   {
+      fflush(stdin);
+      userOpt = get_option(CHAR, "Press: [s] = Select. [q] | Cancel:\n");
+   switch(userOpt) {
+      case 'q' :
+         goto start; //goes back to very start of function
+         break;
+      case 's' :
+         chosenSNo = get_option(NUM, "Select a Serial Number (S.No) to Delete: ");
+         break;
+      default:
+         printf("Please choose a valid option.\n");
+      } 
+   }
+
+   userOpt = get_option(CHAR, "Enter 'Y' to delete. [Press any other key to ignore]: ");
+   /* Deletes person from array if chosen, otherwise goes back to start */
+   if(userOpt == 'Y')
+   {
+      /*Pointers for start and end*/
+      ContactInfo * ptrToContact = address_book->list;
+      ContactInfo * endingPtr = ptrToContact + address_book->count;
+
+      /*Pointers to the person in front of chosen to be deleted, and the soon to be deleted person*/
+      ptrToContact = getContactAddress(address_book, chosenSNo);
+      ptrToContact = ptrToContact++;
+      ContactInfo * prevptrToContact = ptrToContact--;
+
+      do
+      {
+         /* Set all names of current user to previous user*/
+         strcpy(prevptrToContact->name, ptrToContact->name);
+         for(int i = 0; i < PHONE_NUMBER_COUNT; i++)
+         {
+         strcpy(prevptrToContact->phone_numbers, ptrToContact->phone_numbers);
+         }
+         for(int i = 0; i < EMAIL_ID_COUNT; i++)
+         {
+         strcpy(prevptrToContact->email_addresses, ptrToContact->email_addresses);
+         }
+         prevptrToContact->si_no = ptrToContact->si_no;
+
+         /* Move pointers forward */
+         prevptrToContact++;
+         ptrToContact++;
+      } while (ptrToContact != endingPtr); //repeat until no more spots to write over
+
+      list = realloc(list, sizeof(list) - sizeof(ContactInfo*);
+
+   }
+   goto start;
+   
+   end:
+   return e_success;
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
