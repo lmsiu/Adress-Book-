@@ -62,7 +62,7 @@ typedef enum
 	e_save
 } MenuFeatures;
 
-struct
+typedef struct Contact
 {
 	char name[NAME_COUNT][NAME_LEN];
 	char phone_numbers[PHONE_NUMBER_COUNT][NUMBER_LEN];
@@ -73,7 +73,7 @@ struct
 typedef struct
 {
 	FILE *fp;
-	struct ContactInfo *list;
+	struct Contact *list;
 	int count;	
 } AddressBook;
 

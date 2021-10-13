@@ -98,7 +98,7 @@ void main_menu(void)
 
 Status menu(AddressBook *address_book)
 {
-	struct ContactInfo backup;
+	struct Contact backup;
 	Status ret;
 	int option;
 
@@ -166,8 +166,8 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
       printf("=");
 
    //Get start and end point for search
-   struct ContactInfo * ptrToPeople = address_book->list;
-   struct ContactInfo * endPtr = ptrToPeople + address_book->count;
+   struct Contact * ptrToPeople = address_book->list;
+   struct Contact * endPtr = ptrToPeople + address_book->count;
    unsigned int foundPeople = 0;
 
    for (ptrToPeople; ptrToPeople < endPtr; ptrToPeople++)
@@ -189,29 +189,29 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
             printf(" ");
 
          //Print name
-         printf(": %s", ptrToPeople.name);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.name); spaces++)
+         printf(": %s", ptrToPeople->name);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->name); spaces++)
             printf(" ");
          
          //Print phone number 1
-         printf(": %s", ptrToPeople.phone_numbers[0]);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[0]); spaces++)
+         printf(": %s", ptrToPeople->phone_numbers[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->phone_numbers[0]); spaces++)
             printf(" ");
 
          //Print email 1
-         printf(": %s", ptrToPeople.email_addresses[0]);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[0]); spaces++)
+         printf(": %s", ptrToPeople->email_addresses[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->email_addresses[0]); spaces++)
             printf(" ");
          printf(":\n");
 
          //Print remaining emails and phone numbers
          for (int infoLine = 1; infoLine < PHONE_NUMBER_COUNT; infoLine++) //Condition will need changing if PHONE_NUMBER_COUNT is ever not equal to EMAIL_ID_COUNT
          {
-            printf(":      :                                 : %s", ptrToPeople.phone_numbers[infoLine]); // Will need changing if contacts can ever have multiple names/serial numbers
-            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[infoLine]); spaces++)
+            printf(":      :                                 : %s", ptrToPeople->phone_numbers[infoLine]); // Will need changing if contacts can ever have multiple names/serial numbers
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->phone_numbers[infoLine]); spaces++)
                printf(" ");
-            printf(": %s", ptrToPeople.email_addresses[infoLine]);
-            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[infoLine]); spaces++)
+            printf(": %s", ptrToPeople->email_addresses[infoLine]);
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->email_addresses[infoLine]); spaces++)
                printf(" ");
             printf(":\n");
          }
@@ -228,7 +228,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 }
 
 //Allows for an easy comparison in search()
-static int compareFields(int field, const char * toCheck, struct ContactInfo * contact)
+static int compareFields(int field, const char * toCheck, struct Contact * contact)
 {
    switch (field)
    {
@@ -314,10 +314,10 @@ Status edit_contact(AddressBook *address_book)
    int sino;
    char yn;
 
-   struct ContactInfo * contactToEdit;
+   struct Contact * contactToEdit;
    int indexToChange;
 
-   struct ContactInfo ci; //tester
+   struct Contact ci; //tester
 
    char * quitMsg = "Press: [q] | Cancel: ";
 
@@ -432,13 +432,13 @@ Status delete_contact(AddressBook *address_book)
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
-struct ContactInfo * getContactAddress(AddressBook *addBook, int sno)
+struct Contact * getContactAddress(AddressBook *addBook, int sno)
 {
-   struct ContactInfo * ptr = addBook->list;
-   struct ContactInfo * endPtr = addBook->list + addBook->count;
+   struct Contact * ptr = addBook->list;
+   struct Contact * endPtr = addBook->list + addBook->count;
    for (; ptr < endPtr; ptr++)
    {
-      if (ptr.si_no == sno)
+      if (ptr->si_no == sno)
          return ptr;
    }
    return NULL;
