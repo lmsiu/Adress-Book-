@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
+#include <unistd.h> //need for sleep()
 #include <malloc/malloc.h>
 
 int get_option(int type, const char *msg){
@@ -40,10 +40,10 @@ void menu_header(const char *str)
 	}
 }
 
-int add_menu(ContactInfo* newContact, /*int contactCreated,*/ int phoneNumCount, int emailCount){
+int add_menu(ContactInfo* newContact, int phoneNumCount, int emailCount){
     menu_header("Add Contact:\n");
     printf("0. Back\n");
-    printf("1. Name: %s\n", newContact->name[0]);//(contactCreated==1) ? newContact->name[0]:"");
+    printf("1. Name: %s\n", newContact->name[0]);
     printf("2. Phone Number 1: %s\n", newContact->phone_numbers[0]);
     for(int i = 1; i<=phoneNumCount-1; i++){
       printf("   Phone Number %i: %s\n", i+1, newContact->phone_numbers[i]);
@@ -69,11 +69,11 @@ Status add_contacts(AddressBook *address_book){
     strcpy(newContact.name[0], "");
     for(int p = 0; p < PHONE_NUMBER_COUNT; p++){
         strcpy(newContact.phone_numbers[p],"");
-        printf("Phone %d: %s\n", p, newContact.phone_numbers[p]);
+        //printf("Phone %d: %s\n", p, newContact.phone_numbers[p]);
     }
     for(int e = 0; e < EMAIL_ID_COUNT; e++){
         strcpy(newContact.email_addresses[e],"");
-        printf("Email %d: %s\n", e, newContact.email_addresses[e]);
+        //printf("Email %d: %s\n", e, newContact.email_addresses[e]);
     }
 
     //display add menu for user
@@ -85,7 +85,7 @@ Status add_contacts(AddressBook *address_book){
 
     //act based on user input
     if(searchOption == 0){
-        printf("Go back!\n");//delete later
+        //printf("Go back!\n");//delete later
         goto quit;
     } else if(searchOption == NAME){
         printf("Please input the name of your new contact: ");
@@ -121,27 +121,27 @@ Status add_contacts(AddressBook *address_book){
     goto menu;
 
     quit:
-    printf("Time to save\n");//delete later
+    //printf("Time to save\n");//delete later
 
     if(contactCreated == 0){
         printf("No contact was created.\n");
         return e_back;
     }
-    printf("Contact created.\n");
+    //printf("Contact created.\n");
 
     //increase count by 1
-    printf("Count: %d\n", address_book->count);
+    //printf("Count: %d\n", address_book->count);
     address_book -> count += 1;
-    printf("Count: %d\n", address_book->count);
+    //printf("Count: %d\n", address_book->count);
 
-    printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
+    //printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
     ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo*));
     if(tempPtr == NULL){
         printf("Memory reallocation failed! Please try to add contact again later.\n");
         return e_back;
     }
     address_book->list = tempPtr;
-    printf("List size after realloc(): %zu\n", malloc_size(address_book->list));
+    //printf("List size after realloc(): %zu\n", malloc_size(address_book->list));
 
     address_book->list[(address_book->count)-1] = newContact;
 
@@ -150,7 +150,7 @@ Status add_contacts(AddressBook *address_book){
 
 int main(){
     AddressBook address_book;
-    address_book.count = 0;
+    address_book.count = 0; //need to init count = 0
     printf("List address: %p\n", address_book.list);
     address_book.list = malloc(0); //possibly not needed, can possibly just use realloc without an initial malloc()
  
