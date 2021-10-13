@@ -71,26 +71,57 @@ Status add_contacts(AddressBook *address_book){
     searchOption = get_option(NUM, "Please select an option: ");
 
     if(searchOption == 0){
-
+        printf("Go back!\n");
+        return e_back;
     } else if(searchOption == NAME){
         printf("Please input the name of your new contact: ");
         scanf("%s", userName);
         strcpy(newContact.name[0], userName);
         contactCreated = 1;
     } else if(searchOption == NUMBER){
-
+        phoneNumCount++;
+        if(phoneNumCount > 5){
+            printf("Error! You may only input up to 5 phone numbers for your new contact. \n");
+            phoneNumCount--;
+            sleep(1);//may need to delete if i cannot add the <unistd.h> library
+        }else{
+            printf("Please enter phone number %i (without hyphens or parentheses): ", phoneNumCount);
+            scanf("%s", tempPhoneNum);
+            strcpy(newContact.phone_numbers[phoneNumCount-1], tempPhoneNum);
+        }
+    } else if(searchOption ==  EMAIL){
+        emailCount++;
+      if(emailCount > 5){
+         printf("Error! You may only input up to 5 email addresses for your new contact. \n");
+         emailCount--;
+         sleep(1);//may need to delete if i cannot add the <unistd.h> library
+      }else{
+         printf("Please enter email address %i: ", emailCount);
+         scanf("%s", tempEmail);
+         strcpy(newContact.email_addresses[emailCount-1], tempEmail);
+      }
+    } else{
+        printf("Error! Please select a number from 0 to 3.\n");
     }
     goto menu;
+
+    return e_success;
 }
 
 int main(){
     AddressBook address_book;
     address_book.count = 0;
+    printf("List address: %p\n", address_book.list);
+    address_book.list = malloc(0); //possibly not needed, can possibly just use realloc without an initial malloc()
+ 
+    add_contacts(&address_book);
+
+    /*
     printf("Count: %d\n", address_book.count);
     printf("List address: %p\n", address_book.list);
     printf("List size BEFORE: %lu\n", sizeof(address_book.list));
     printf("List size BEFORE w/ &: %lu\n", sizeof(&address_book.list));
-    printf("List size BEFORE w/*: %lu\n", sizeof(*address_book.list));
+    printf("List size BEFORE w/ *: %lu\n", sizeof(*address_book.list));
     printf("List size w/ malloc_size: %zu\n", malloc_size(address_book.list));
     address_book.list = malloc(0);
     printf("List address: %p\n", address_book.list);
@@ -176,6 +207,7 @@ int main(){
     printf("Email 3: %s\n", address_book.list[2].email_addresses[2]);
     printf("Email 4: %s\n", address_book.list[2].email_addresses[3]);
     printf("Email 5: %s\n", address_book.list[2].email_addresses[4]);
+    */
 
     free(address_book.list);
 
