@@ -72,7 +72,7 @@ Status add_contacts(AddressBook *address_book){
 
     if(searchOption == 0){
         printf("Go back!\n");
-        return e_back;
+        goto quit;
     } else if(searchOption == NAME){
         printf("Please input the name of your new contact: ");
         scanf("%s", userName);
@@ -102,8 +102,12 @@ Status add_contacts(AddressBook *address_book){
       }
     } else{
         printf("Error! Please select a number from 0 to 3.\n");
+        sleep(1);
     }
     goto menu;
+
+    quit:
+    printf("Time to save\n");
 
     return e_success;
 }
