@@ -122,7 +122,7 @@ Status add_contacts(AddressBook *address_book){
 
     quit:
     printf("Time to save\n");//delete later
-/*
+
     if(contactCreated == 0){
         printf("No contact was created.\n");
         return e_back;
@@ -144,7 +144,7 @@ Status add_contacts(AddressBook *address_book){
     printf("List size after realloc(): %zu\n", malloc_size(address_book->list));
 
     address_book->list[(address_book->count)-1] = newContact;
-*/
+
     return e_success;
 }
 
@@ -155,6 +155,19 @@ int main(){
     address_book.list = malloc(0); //possibly not needed, can possibly just use realloc without an initial malloc()
  
     add_contacts(&address_book);
+    add_contacts(&address_book);
+    add_contacts(&address_book);
+
+    for(int i = 0; i < address_book.count; i++){
+        printf("Name %d: %s\n", i+1, address_book.list[i].name[0]);
+        for(int k = 0; k < PHONE_NUMBER_COUNT; k++){
+            printf("Phone %d: %s\n", k+1, address_book.list[i].phone_numbers[k]);
+        }
+        for(int j = 0; j < EMAIL_ID_COUNT; j++){
+            printf("Email %d: %s\n", j+1, address_book.list[i].email_addresses[j]);
+        }
+        printf("\n");
+    }
 
     /*
     printf("Count: %d\n", address_book.count);
