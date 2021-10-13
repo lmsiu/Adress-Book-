@@ -71,7 +71,7 @@ Status add_contacts(AddressBook *address_book){
     searchOption = get_option(NUM, "Please select an option: ");
 
     if(searchOption == 0){
-        printf("Go back!\n");
+        printf("Go back!\n");//delete later
         goto quit;
     } else if(searchOption == NAME){
         printf("Please input the name of your new contact: ");
@@ -102,12 +102,18 @@ Status add_contacts(AddressBook *address_book){
       }
     } else{
         printf("Error! Please select a number from 0 to 3.\n");
-        sleep(1);
+        sleep(1);//may need to delete if i cannot add the <unistd.h> library
     }
     goto menu;
 
     quit:
-    printf("Time to save\n");
+    printf("Time to save\n");//delete later
+
+    if(contactCreated == 0){
+        printf("No contact was created.\n");
+        return e_back;
+    }
+    printf("Contact created.\n");
 
     return e_success;
 }
