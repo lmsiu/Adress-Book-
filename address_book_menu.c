@@ -217,7 +217,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
    }
    printf("%s", msg);
    if (foundPeople > 0)
-      return e_succes;
+      return e_success;
    else if (foundPeople < 0)
       return e_fail;
    return e_no_match;
@@ -252,7 +252,6 @@ static int compareFields(int field, const char * toCheck, ContactInfo * contact)
 
 Status search_contact(AddressBook *address_book)
 {
-   char * quitMsg = "Press: [q] | Cancel: ";
    Status endStat;
    //Create a search menu
 	menu_header("Search contact by:\n");
@@ -273,28 +272,28 @@ Status search_contact(AddressBook *address_book)
       printf("Enter the Name: ");
       char * name;
       scanf("%s", &name);
-      endStat = search(name, address_book, 0, NAME, quitMsg, e_search);
+      endStat = search(name, address_book, 0, NAME, "", e_search);
    }
    else if (searchOption == NUMBER)
    {
       printf("Enter the Phone Number: ");
       char * number;
       scanf("%s", number);
-      endStat = search(number, address_book, 0, NUMBER, quitMsg, e_search);
+      endStat = search(number, address_book, 0, NUMBER, "", e_search);
    }
    else if (searchOption == EMAIL)
    {
       printf("Enter the Email ID: ");
       char * email;
       scanf("%s", email);
-      endStat = search(email, address_book, 0, EMAIL, quitMsg, e_search);
+      endStat = search(email, address_book, 0, EMAIL, "", e_search);
    }
    else if (searchOption == SERIAL)
    {
       printf("Enter the Serial Number: ");
       char * sno;
       scanf("%s", &sno);
-      endStat = search(sno, address_book, 0, SERIAL, quitMsg, e_search);
+      endStat = search(sno, address_book, 0, SERIAL, "", e_search);
    }
    else
       endStat = e_fail;
