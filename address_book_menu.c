@@ -17,13 +17,17 @@ int get_option(int type, const char *msg)
    switch (type)
    {
       case NUM:
+      {
          int opt;
          scanf("%d", &opt);
          return opt;
+      }
       case CHAR:
+      {
          char opt;
          scanf("%c", &opt);
          return opt;
+      }
       case NONE:
          return e_no_opt;
    }
@@ -94,7 +98,7 @@ void main_menu(void)
 
 Status menu(AddressBook *address_book)
 {
-	ContactInfo backup;
+	struct ContactInfo backup;
 	Status ret;
 	int option;
 
@@ -162,8 +166,8 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
       printf("=");
 
    //Get start and end point for search
-   ContactInfo * ptrToPeople = address_book->list;
-   ContactInfo * endPtr = ptrToPeople + address_book->count;
+   struct ContactInfo * ptrToPeople = address_book->list;
+   struct ContactInfo * endPtr = ptrToPeople + address_book->count;
    unsigned int foundPeople = 0;
 
    for (ptrToPeople; ptrToPeople < endPtr; ptrToPeople++)
@@ -171,11 +175,11 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
       if (compareFields(field, str, ptrToPeople) == 0)
       {
          foundPeople++;
-         printf("\n: %d", ptrToPeople.si_no);
+         printf("\n: %d", ptrToPeople->si_no);
 
          //A little thing to keep the format nice
          short lengthOfSerial = 2; //Includes the one digit and one space
-         int serial = ptrToPeople.si_no;
+         int serial = ptrToPeople->si_no;
          while (serial > 10)
          {
             serial /= 10;
@@ -217,14 +221,14 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
    }
    printf("%s", msg);
    if (foundPeople > 0)
-      return e_succes;
+      return e_success;
    else if (foundPeople < 0)
       return e_fail;
    return e_no_match;
 }
 
 //Allows for an easy comparison in search()
-static int compareFields(int field, const char * toCheck, ContactInfo * contact)
+static int compareFields(int field, const char * toCheck, struct ContactInfo * contact)
 {
    switch (field)
    {
@@ -310,10 +314,10 @@ Status edit_contact(AddressBook *address_book)
    int sino;
    char yn;
 
-   ContactInfo * contactToEdit;
+   struct ContactInfo * contactToEdit;
    int indexToChange;
 
-   ContactInfo ci; //tester
+   struct ContactInfo ci; //tester
 
    char * quitMsg = "Press: [q] | Cancel: ";
 
@@ -428,10 +432,10 @@ Status delete_contact(AddressBook *address_book)
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
-*ContactInfo getContactAddress(AddressBook *addBook, int sno)
+struct ContactInfo * getContactAddress(AddressBook *addBook, int sno)
 {
-   ContactInfo * ptr = addBook->list;
-   ContactInfo * endPtr = addBook->list + addBook->count;
+   struct ContactInfo * ptr = addBook->list;
+   struct ContactInfo * endPtr = addBook->list + addBook->count;
    for (; ptr < endPtr; ptr++)
    {
       if (ptr.si_no == sno)
