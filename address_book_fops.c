@@ -83,10 +83,8 @@ Status load_file(AddressBook *address_book)
 
 Status save_file(AddressBook *address_book)
 {
-	/*
-	 * Write contacts back to file.
-	 * Re write the complete file currently
-	 */ 
+
+	//open DEFAULT_FILE with the "w" file permission
 	address_book->fp = fopen(DEFAULT_FILE, "w");
 
 	if (address_book->fp == NULL)
@@ -94,11 +92,22 @@ Status save_file(AddressBook *address_book)
 		return e_fail;
 	}
 
-	/* 
-	 * Add the logic to save the file
-	 * Make sure to do error handling
-	 */ 
+	//print name, phone numbers, email addresses, and serial ID's of all contacts to DEFAULT_FILE
+	//each line = 1 contact
+	//commas separate data fields
+	//empty data is saved as "", as initialized in the add_contacts() function in the address_book_menu.c file
+	for(int contactNum = 0; contactNum < address_book->count; contactNum++){
+		fprintf(address_book->fp, "%s,",address_book->list[contactNum].name[0]);
+		for(int phoneNum = 0; phoneNum < PHONE_NUMBER_COUNT; phoneNum++){
+			fprintf(address_book->fp,"%s,",address_book->list[contactNum].phone_numbers[phoneNum]);
+		}
+		for(int emailCount = 0; emailCount < EMAIL_ID_COUNT; emailCount++){
+			fprintf(address_book->fp, "%s,",address_book->list[contactNum].email_addresses[emailCount]);
+		}
+		fprintf(address_book->fp, "%d\n", address_book->list[contactNum].si_no);
+	}
 
+	//close file
 	fclose(address_book->fp);
 
 	return e_success;
