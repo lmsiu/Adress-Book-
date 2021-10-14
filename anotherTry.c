@@ -134,8 +134,11 @@ Status add_contacts(AddressBook *address_book){
     address_book -> count += 1;
     //printf("Count: %d\n", address_book->count);
 
-    //printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
-    ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo*));
+    //Assign serial id based on address_book->count variable
+    newContact.si_no = address_book->count;
+
+    printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
+    ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo));
     if(tempPtr == NULL){
         printf("Memory reallocation failed! Please try to add contact again later.\n");
         return e_back;
@@ -166,6 +169,7 @@ int main(){
         for(int j = 0; j < EMAIL_ID_COUNT; j++){
             printf("Email %d: %s\n", j+1, address_book.list[i].email_addresses[j]);
         }
+        printf("Serial ID: %d\n", address_book.list[i].si_no);
         printf("\n");
     }
 
