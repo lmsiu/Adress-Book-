@@ -228,9 +228,12 @@ Status add_contacts(AddressBook *address_book){
 
    //increase count by 1
    address_book -> count += 1;
+   
+   //Assign serial id based on address_book->count variable
+   newContact.si_no = address_book->count;
 
-   //printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
-   ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo*));
+   printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
+   ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo));
    if(tempPtr == NULL){
       printf("Memory reallocation failed! Please try to add contact again later.\n");
       return e_back;
