@@ -21,7 +21,7 @@ Status load_file(AddressBook *address_book)
 	{
       address_book->fp = fp;
       address_book->list = malloc(0);
-      if (!list)
+      if (!address_book->list)
       {
          printf("Not able to allocate any memory.");
          return e_fail;
@@ -40,18 +40,21 @@ Status load_file(AddressBook *address_book)
          address_book->list = tempPtr;                //Reassign list to new people
          currPerson = address_book->list + count - 1; //Start a new person
          unsigned int currChar = 0;                   //Read through the string one character at a time
-         while (contactBuff[currChar] != ',')         //Read name
-         {
-            currPerson.name[currChar] = contactBuff[currChar];
-            currChar++;
+         for (int currName = 0; currName < NAME_COUNT; currName++)
+         { 
+            while (contactBuff[currChar] != ',')         //Read name
+            {
+               currPerson->name[currName][currChar] = contactBuff[currChar];
+               currChar++;
+            }
+            currChar++; //Move past comma
          }
-         currChar++;                //Move past comma
          for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++) //Read each phone number
          {
             while (contactBuff[currChar] != ',')
             {
-               currPerson.phone_numbers[phone][currChar] = contactBuff[currChar];
-               currChar++
+               currPerson->phone_numbers[phone][currChar] = contactBuff[currChar];
+               currChar++;
             }
             currChar++;
          }
@@ -59,12 +62,12 @@ Status load_file(AddressBook *address_book)
          {
             while (contactBuff[currChar] != ',')
             {
-               currPerson.email_addresses[email][currChar] = contactBuff[currChar];
-               currChar++
+               currPerson->email_addresses[email][currChar] = contactBuff[currChar];
+               currChar++;
             }
             currChar++;
          }
-         currPerson.si_no = count;  //Assign a serial number
+         currPerson->si_no = count;  //Assign a serial number
          address_book->count = count; //Update the count
       }
 	}
