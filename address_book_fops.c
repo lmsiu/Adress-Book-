@@ -30,7 +30,7 @@ Status load_file(AddressBook *address_book)
       unsigned int count = 0;
       while (EOF != fscanf(fp, "%s", contactBuff)) //Input until end of file
       {
-         ContactInfo * tempPtr = realloc(address_book->list, sizeof(ContactInfo));
+         ContactInfo * tempPtr = realloc(address_book->list, (count + 1) * sizeof(ContactInfo));
          if (!tempPtr)
          {
             printf("Not able to allocate more memory. %i people loaded.", count);
