@@ -141,7 +141,7 @@ Status add_contacts(AddressBook *address_book){
     ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo));
     if(tempPtr == NULL){
         printf("Memory reallocation failed! Please try to add contact again later.\n");
-        return e_back;
+        return e_fail;
     }
     address_book->list = tempPtr;
     //printf("List size after realloc(): %zu\n", malloc_size(address_book->list));
