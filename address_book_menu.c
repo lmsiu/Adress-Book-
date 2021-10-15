@@ -56,11 +56,71 @@ Status save_prompt(AddressBook *address_book)
 
 Status list_contacts(AddressBook *address_book, const char *title, int *index, const char *msg, Modes mode)
 {
-	/* 
-	 * Add code to list all the contacts availabe in address_book.csv file
-	 * Should be menu based
-	 * The menu provide navigation option if the entries increase the page size
-	 */ 
+
+   ContactInfo * contactInfoPtr = address_book->list;
+   ContactInfo * endPtr = contactInfoPtr + address_book->count;
+
+    //print collumns
+    for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
+      printf("=");
+   printf("\n: S.No : Name");
+   for (int spaces = 0; spaces < 33 - 5; spaces++){
+      printf(" ");
+   }
+   printf(": Phone No");
+   for (int spaces = 0; spaces < 33 - 9; spaces++){
+      printf(" ");
+   }
+   printf(": Email ID                     :\n");
+   for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++){
+      printf("=");
+    }
+    printf("\n");
+
+    //print stuff
+    for(contactInfoPtr; contactInfoPtr < endPtr; contactInfoPtr++){
+        //print name and si_no
+        int sino = contactInfoPtr->si_no;
+
+        // printf("Name: %s\n", address_book->list[0].name[0]);
+        printf(": %2d   : %s", sino, contactInfoPtr->name[0]);
+        for(int spaces = 0; spaces < 32 - strlen(contactInfoPtr->name[0]); spaces++){
+            printf(" ");
+        }
+
+        printf(": %s", contactInfoPtr->phone_numbers[0]);
+
+        for(int spaces = 0; spaces < 32 - strlen(contactInfoPtr->phone_numbers[0]); spaces++){
+            printf(" ");
+        }
+
+        printf(": %s", contactInfoPtr->email_addresses[0]);
+
+        printf("\n");
+
+         //print phone numbers and emails
+        for(int i = 1; i < PHONE_NUMBER_COUNT; i++){
+           for(int spaces = 0; spaces < 41; spaces++){
+              printf(" ");
+           }
+
+           printf(": %s", contactInfoPtr->phone_numbers[i]);
+
+           for(int spaces = 0; spaces < 32 - strlen(contactInfoPtr->phone_numbers[i]); spaces++){
+               printf(" ");
+            }
+
+            printf(": %s", contactInfoPtr->email_addresses[i]);
+
+            printf("\n");
+        }
+
+        for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++){
+         printf("=");
+        }
+
+        printf("\n");
+    }
 
 	return e_success;
 }
@@ -272,11 +332,11 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
       if (compareFields(field, str, ptrToPeople) == 0)
       {
          foundPeople++;
-         printf("\n: %d", ptrToPeople.si_no);
+         printf("\n: %d", ptrToPeople->si_no);
 
          //A little thing to keep the format nice
          short lengthOfSerial = 2; //Includes the one digit and one space
-         int serial = ptrToPeople.si_no;
+         int serial = ptrToPeople->si_no;
          while (serial > 10)
          {
             serial /= 10;
@@ -286,29 +346,29 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
             printf(" ");
 
          //Print name
-         printf(": %s", ptrToPeople.name);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.name); spaces++)
+         printf(": %s", ptrToPeople->name);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->name); spaces++)
             printf(" ");
          
          //Print phone number 1
-         printf(": %s", ptrToPeople.phone_numbers[0]);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[0]); spaces++)
+         printf(": %s", ptrToPeople->phone_numbers[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->phone_numbers[0]); spaces++)
             printf(" ");
 
          //Print email 1
-         printf(": %s", ptrToPeople.email_addresses[0]);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[0]); spaces++)
+         printf(": %s", ptrToPeople->email_addresses[0]);
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->email_addresses[0]); spaces++)
             printf(" ");
          printf(":\n");
 
          //Print remaining emails and phone numbers
          for (int infoLine = 1; infoLine < PHONE_NUMBER_COUNT; infoLine++) //Condition will need changing if PHONE_NUMBER_COUNT is ever not equal to EMAIL_ID_COUNT
          {
-            printf(":      :                                 : %s", ptrToPeople.phone_numbers[infoLine]); // Will need changing if contacts can ever have multiple names/serial numbers
-            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.phone_numbers[infoLine]); spaces++)
+            printf(":      :                                 : %s", ptrToPeople->phone_numbers[infoLine]); // Will need changing if contacts can ever have multiple names/serial numbers
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->phone_numbers[infoLine]); spaces++)
                printf(" ");
-            printf(": %s", ptrToPeople.email_addresses[infoLine]);
-            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople.email_addresses[infoLine]); spaces++)
+            printf(": %s", ptrToPeople->email_addresses[infoLine]);
+            for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->email_addresses[infoLine]); spaces++)
                printf(" ");
             printf(":\n");
          }
@@ -405,55 +465,112 @@ Status search_contact(AddressBook *address_book)
 
 Status edit_contact(AddressBook *address_book)
 {
-		/* Add the functionality for edit contacts here */
    char stringToChange[32] = "";
-   int newNum;
+   int sino;
+   char yn;
+
    ContactInfo * contactToEdit;
-//    Status endStat;
-   ContactInfo ci;
+   int indexToChange;
+
+   char * quitMsg = "Press: [q] | Cancel: ";
 
    printf("Which contact would you like to edit?\n");
-   //need to have this be a pointer to a ContactInfo
-   //will update with searchContact
-   contactToEdit = &ci;
+   search_contact(address_book); //uses search contact to search and print contact
 
-   printf("What would you like to change the name to?\n");
-   scanf("%s", stringToChange);
-   //NAME_COUNT subject to change to NAME_LEN
-   // printf("in strcpy");
-   
-   for(int n = 0; n < NAME_COUNT; n++){
-      //source string subject to change to stringToChange[n]
-      strcpy(contactToEdit->name[n], stringToChange);
-      // printf("Changing name");
+   printf("Please enter the serial number of the contact\n");
+   scanf("%d", sino);
 
-   }
-   printf("New in contact %s\n", contactToEdit->name[0]);
-   printf("New string %s\n", stringToChange);
-   
+   contactToEdit= getContactAddress(address_book, sino);
 
-   printf("What would you like to change the phone number to?\n");
-   scanf("%s", stringToChange);
-   for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
+   menu_header("Edit contact by:\n");
+   printf("0. Back\n");
+   printf("1. Name\n");
+   printf("2. Phone No\n");
+   printf("3. Email ID\n");
+
+   //Get user's choice
+   int searchOption = get_option(NUM, "Please select an option: ");
+
+   //React to user choice
+   if (searchOption == 0)
+      return e_back;
+   else if (searchOption == NAME)
    {
-      //source string is subject to change to stringToChange[phone]
-      strcpy(contactToEdit->phone_numbers[phone], stringToChange);
-   }
-   printf("New in contact %s\n", contactToEdit->phone_numbers[0]);
-   printf("New string %s\n", stringToChange);
-   
+      printf("What would you like to change the name to?\n ");
+      scanf("%s", &stringToChange);
+      strcpy(contactToEdit->name[0], stringToChange);
+      // printf("New name: %s", contactToEdit->name[0]);
 
-   printf("What would you like to change the email adress to?\n");
-   scanf("%s", stringToChange);
-   for(int email = 0; email < EMAIL_ID_COUNT; email++){
-      strcpy(contactToEdit->email_addresses[email], stringToChange);
-   }
-   printf("New in contact %s\n", contactToEdit->email_addresses[0]);
-   printf("New string %s\n", stringToChange);
+   } else if (searchOption == NUMBER) {
 
-   printf("What would you like to change the sireal number to?\n");
-   scanf("%d\n", &newNum);
-   contactToEdit->si_no = newNum;
+      printf("Would you like to change a phone number? (y/n)\n");
+      scanf("%c", &yn);
+
+      while(yn == 'y' || yn =='Y'){
+      printf("Which phone number would you like to change?\n");
+      for(int i = 0; i<PHONE_NUMBER_COUNT; i++){
+         printf("Name: %s, Phone number %d: %s\n", contactToEdit->name, i+1, contactToEdit->phone_numbers[i]);
+      }
+      scanf("%d", &indexToChange); //input will be 1 greater than the index
+
+      printf("What would you like to change the phone number to?\n");
+      scanf("%s", stringToChange);
+
+      strcpy(contactToEdit->phone_numbers[indexToChange - 1], stringToChange);
+
+      printf("Updated phone numbers: \n");
+      for(int i = 0; i<PHONE_NUMBER_COUNT; i++){
+         printf("Name: %s, Phone number %d: %s\n", contactToEdit->name, i+1, contactToEdit->phone_numbers[i]);
+      }
+
+      // printf("New string %s\n", stringToChange);
+
+      printf("Would you like to change another phone number? (y/n)\n");
+
+      getchar();
+      scanf("%c%*c", &yn);
+
+      }
+
+   } else if (searchOption == EMAIL) {
+      printf("Would you like to change an email address? (y/n)\n");
+      scanf("%c", &yn);
+
+      while(yn == 'y' || yn =='Y'){
+      printf("Which email address would you like to change?\n");
+      for(int i = 0; i<EMAIL_ID_COUNT; i++){
+         printf("Name: %s, Email address %d: %s\n", contactToEdit->name[0], i+1, contactToEdit->email_addresses[i]);
+      }
+      scanf("%d", &indexToChange); //input will be 1 greater than the index
+
+      printf("What would you like to change the email address to?\n");
+      scanf("%s", stringToChange);
+
+      strcpy(contactToEdit->email_addresses[indexToChange - 1], stringToChange);
+
+      printf("Updated phone numbers: \n");
+      for(int i = 0; i<EMAIL_ID_COUNT; i++){
+         printf("Name: %s, Email address %d: %s\n", contactToEdit->name[0], i+1, contactToEdit->email_addresses[i]);
+      }
+
+      // printf("New string %s\n", stringToChange);
+
+      printf("Would you like to change another email address? (y/n)\n");
+
+      getchar();
+      scanf("%c%*c", &yn);
+      }
+
+   }
+   else{
+      return e_fail;
+   }
+
+   char opt = get_option(CHAR, "");
+
+   if (opt == 'q'){
+      return e_back;
+   }
 
    return e_success;
 
@@ -472,7 +589,7 @@ Status delete_contact(AddressBook *address_book)
    ContactInfo * endPtr = addBook->list + addBook->count;
    for (; ptr < endPtr; ptr++)
    {
-      if (ptr.si_no == sno)
+      if (ptr->si_no == sno)
          return ptr;
    }
    return NULL;
