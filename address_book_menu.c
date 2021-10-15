@@ -579,7 +579,122 @@ Status edit_contact(AddressBook *address_book)
 
 Status delete_contact(AddressBook *address_book)
 {
-	/* Add the functionality for delete contacts here */
+   /* Add the functionality for delete contacts here */
+   int userChoice;
+   char userOpt;
+   char userOpt2;
+   int chosenSNO;
+   int finalSNO;
+   Status endStat2;
+   char * Msg = "";
+
+   start:
+   /*resets values for when user come back to the start*/
+   userChoice = NULL;
+   userOpt = NULL;
+   userOpt2 = NULL;
+
+   /* Prints to console options*/
+   printf("Search Contact to Delete by:\n");
+   printf("0. Back\n");
+   printf("1. Name\n");
+   printf("2. Phone No\n");
+   printf("3. Email ID\n");
+   printf("4. Serial No\n\n");
+   redo:
+
+   userChoice = get_option(NUM, "Please select an option: ");
+   /*Switch used to decide who to look up and how using users input*/
+   switch(userChoice){
+      case NONE:
+      goto end;   //ends function returning to main menu
+      break;
+      case NAME :
+         /* searches by name */
+         printf("Enter the Name: ");
+         char * name;
+         scanf("%s", &name);
+         endStat2 = search(name, address_book, 0, NAME, Msg, e_search);
+         break;
+      case NUMBER :
+         /* searches by number */
+         printf("Enter the Phone Number: ");
+         char * number;
+         scanf("%s", number);
+         endStat2 = search(number, address_book, 0, NUMBER, Msg, e_search);
+         break;
+      case EMAIL :
+         /* searches by email */
+         printf("Enter the Email ID: ");
+         char * email;
+         scanf("%s", email);
+         endStat2 = search(email, address_book, 0, EMAIL, Msg, e_search);
+         break;
+      case SERIAL :
+         /* searches by serial number */
+         printf("Enter the Serial Number: ");
+         char * sno;
+         scanf("%s", &sno);
+         endStat2 = search(sno, address_book, 0, SERIAL, Msg, e_search);
+         break;
+      default :
+         /* didn't choose a given option */
+         printf("Please choose a valid option. \n");
+         goto redo; //reattempts to ask user for a valid option
+   } 
+
+   /*Switch used to decide whether to go back to the very start, continue with deletion, or prompt user for a valid option*/
+   while (userOpt != 's' && userOpt != 'q')
+   {
+      fflush(stdin);
+      userOpt = get_option(CHAR, "\nPress: [s] = Select. [q] | Cancel:\n");
+   switch(userOpt) {
+      case 'q' :
+         printf("Returning to delete menu\n");
+         goto start; //goes back to very start of function
+         break;
+      case 's' :
+         chosenSNO = get_option(NUM, "Select a Serial Number (S.No) to Delete: ");
+         break;
+      default:
+         printf("Please choose a valid option.\n");
+      } 
+   }
+   fflush(stdin);
+
+   userOpt2 = get_option(CHAR, "Enter 'Y' to delete. [Press any other key to ignore]: ");
+   /* Deletes person from array if chosen, otherwise goes back to start */
+   if(userOpt2 == 'Y')
+   {
+      /* Find final Serial Number */
+      int i = 0;
+      while(address_book->list[i].si_no != 0 && address_book->list[i].si_no != NULL)
+      {
+         i++;
+      }
+      int finalSNO = i;
+
+      /* Shifts every contact over by one if set to be deleted contact is not the last contact*/
+      if(chosenSNO < finalSNO)
+      {
+         do
+         {
+            address_book->list[chosenSNO - 1] = address_book->list[chosenSNO];
+            address_book->list[chosenSNO - 1].si_no--;
+            chosenSNO++;
+         } while (chosenSNO < finalSNO);
+      }
+      /* Reallocates size of list to delete the final contact*/
+      Contact* newSize = realloc(address_book->list, (chosenSNO)*sizeof(Contact));
+      address_book->list = newSize;
+      address_book->count--;
+      printf("Successfully deleted Contact.\n");
+   }
+   printf("Returning to delete menu\n");
+   goto start;
+   
+   end:
+   return e_success;
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
