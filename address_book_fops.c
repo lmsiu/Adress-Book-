@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <ctype.h>
@@ -21,7 +21,7 @@ Status load_file(AddressBook *address_book)
 	{
       address_book->fp = fp;
       address_book->list = malloc(0);
-      if (!list)
+      if (!address_book->list)
       {
          printf("Not able to allocate any memory.");
          return e_fail;
@@ -40,18 +40,21 @@ Status load_file(AddressBook *address_book)
          address_book->list = tempPtr;                //Reassign list to new people
          currPerson = address_book->list + count - 1; //Start a new person
          unsigned int currChar = 0;                   //Read through the string one character at a time
-         while (contactBuff[currChar] != ',')         //Read name
-         {
-            currPerson.name[currChar] = contactBuff[currChar];
-            currChar++;
+         for (int currName = 0; currName < NAME_COUNT; currName++)
+         { 
+            while (contactBuff[currChar] != ',')         //Read name
+            {
+               currPerson->name[currName][currChar] = contactBuff[currChar];
+               currChar++;
+            }
+            currChar++; //Move past comma
          }
-         currChar++;                //Move past comma
          for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++) //Read each phone number
          {
             while (contactBuff[currChar] != ',')
             {
-               currPerson.phone_numbers[phone][currChar] = contactBuff[currChar];
-               currChar++
+               currPerson->phone_numbers[phone][currChar] = contactBuff[currChar];
+               currChar++;
             }
             currChar++;
          }
@@ -59,12 +62,12 @@ Status load_file(AddressBook *address_book)
          {
             while (contactBuff[currChar] != ',')
             {
-               currPerson.email_addresses[email][currChar] = contactBuff[currChar];
-               currChar++
+               currPerson->email_addresses[email][currChar] = contactBuff[currChar];
+               currChar++;
             }
             currChar++;
          }
-         currPerson.si_no = count;  //Assign a serial number
+         currPerson->si_no = count;  //Assign a serial number
          address_book->count = count; //Update the count
       }
 	}
@@ -80,10 +83,8 @@ Status load_file(AddressBook *address_book)
 
 Status save_file(AddressBook *address_book)
 {
-	/*
-	 * Write contacts back to file.
-	 * Re write the complete file currently
-	 */ 
+
+	//open DEFAULT_FILE with the "w" file permission
 	address_book->fp = fopen(DEFAULT_FILE, "w");
 
 	if (address_book->fp == NULL)
@@ -91,7 +92,10 @@ Status save_file(AddressBook *address_book)
 		return e_fail;
 	}
 
-	//ContactInfo* tempListPtr = address_book->list;
+	//print name, phone numbers, email addresses, and serial ID's of all contacts to DEFAULT_FILE
+	//each line = 1 contact
+	//commas separate data fields
+	//empty data is saved as "", as initialized in the add_contacts() function in the address_book_menu.c file
 	for(int contactNum = 0; contactNum < address_book->count; contactNum++){
 		fprintf(address_book->fp, "%s,",address_book->list[contactNum].name[0]);
 		for(int phoneNum = 0; phoneNum < PHONE_NUMBER_COUNT; phoneNum++){
@@ -103,11 +107,7 @@ Status save_file(AddressBook *address_book)
 		fprintf(address_book->fp, "%d\n", address_book->list[contactNum].si_no);
 	}
 
-	/* 
-	 * Add the logic to save the file
-	 * Make sure to do error handling
-	 */ 
-
+	//close file
 	fclose(address_book->fp);
 
 	return e_success;
