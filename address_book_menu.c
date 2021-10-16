@@ -566,7 +566,7 @@ Status edit_contact(AddressBook *address_book)
       printf("Would you like to change another phone number? (y/n)\n");
 
       getchar();
-      scanf("%c%*c", &yn);
+      scanf("%c", &yn);
 
       }
 
