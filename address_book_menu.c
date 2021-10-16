@@ -192,6 +192,7 @@ Status menu(AddressBook *address_book)
 				break;
 			case e_search_contact:
 				search_contact(address_book, e_search);
+            printf("After search\n");
 				break;
 			case e_edit_contact:
 				edit_contact(address_book);
@@ -203,7 +204,6 @@ Status menu(AddressBook *address_book)
             list_contacts(address_book, "Contacts", 0, "Press: [q] | Cancel", e_list);
 				break;
 			case e_save:
-            //printf("Save file\n");
 				save_file(address_book);
 				break;
 			case e_exit:
@@ -389,11 +389,18 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
             printf("=");
       }
    }
+   printf("Right before msg\n");
    printf("%s", msg);
-   if (foundPeople > 0)
+   printf("Right after msg\n");
+   sleep(2);
+   if (foundPeople > 0){
+      printf("e_success\n");
       return e_success;
-   else if (foundPeople < 0)
+   }else if (foundPeople < 0){
+      printf("e_fail\n");
       return e_fail;
+   }
+   printf("e_no_match\n");
    return e_no_match;
 }
 
@@ -403,7 +410,7 @@ int compareFields(int field, const char * toCheck, ContactInfo * contact)
    switch (field)
    {
       case NAME:
-         return strcmp(toCheck, contact->name[0]);
+         return strcmp(&toCheck, contact->name[0]);
       case NUMBER:
          for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
          {
@@ -419,7 +426,7 @@ int compareFields(int field, const char * toCheck, ContactInfo * contact)
          }
          return 1;
       case SERIAL:
-         return atoi(toCheck) != contact->si_no;
+         return atoi(&toCheck) != contact->si_no;
    }
    return -1;
 }
@@ -471,9 +478,19 @@ Status search_contact(AddressBook *address_book, Modes comingFrom)
    }
    else
       endStat = e_fail;
-   char opt = get_option(CHAR, "");
-   if (opt == 'q')
+
+   printf("Before char opt\n");
+   sleep(2);
+   getchar();
+   char opt = get_option(CHAR, "Enter q to quit\n");
+   printf("After char opt\n");
+   sleep(2);
+   if (opt == 'q'){
+      printf("opt = q\n");
+      printf("Endstat: %d\n", endStat);
       return endStat;
+   }
+   return e_back;
 }
 
 Status edit_contact(AddressBook *address_book)
