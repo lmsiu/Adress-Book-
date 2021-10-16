@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <unistd.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <ctype.h>
@@ -15,9 +15,11 @@ Status load_file(AddressBook *address_book)
    char contactBuff[len]; 
 
    //Try opening the file for reading
-   FILE * fp = fopen(DEFAULT_FILE, "a+");
+   FILE * fp = fopen(DEFAULT_FILE, "a");
+   fclose(fp);
+   fp = fopen(DEFAULT_FILE, "r");
 
-	if (!fp) //Make sure the pointer is not null
+	if (fp) //Make sure the pointer is not null
 	{
       address_book->fp = fp;
       address_book->list = malloc(0);
@@ -42,29 +44,39 @@ Status load_file(AddressBook *address_book)
          unsigned int currChar = 0;                   //Read through the string one character at a time
          for (int currName = 0; currName < NAME_COUNT; currName++)
          { 
-            while (contactBuff[currChar] != ',')         //Read name
+            while (contactBuff[currChar] != ',' && currChar<NAME_LEN-1)         //Read name
             {
                currPerson->name[currName][currChar] = contactBuff[currChar];
                currChar++;
             }
+            currPerson->name[currName][currChar] = '\0';
             currChar++; //Move past comma
          }
+         int phoneChar = 0;
          for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++) //Read each phone number
          {
-            while (contactBuff[currChar] != ',')
+            phoneChar = 0;
+            while (contactBuff[currChar] != ',' && phoneChar < NUMBER_LEN-1)
             {
-               currPerson->phone_numbers[phone][currChar] = contactBuff[currChar];
+               currPerson->phone_numbers[phone][phoneChar] = contactBuff[currChar];
+               phoneChar++;
                currChar++;
             }
+            currPerson->phone_numbers[phone][phoneChar] = '\0';
             currChar++;
          }
+
+         int emailChar = 0;
          for (int email = 0; email < EMAIL_ID_COUNT; email++)  //Read each email
          {
-            while (contactBuff[currChar] != ',')
+            emailChar = 0;
+            while (contactBuff[currChar] != ',' && emailChar < EMAIL_ID_LEN-1)
             {
-               currPerson->email_addresses[email][currChar] = contactBuff[currChar];
+               currPerson->email_addresses[email][emailChar] = contactBuff[currChar];
+               emailChar++;
                currChar++;
             }
+            currPerson->email_addresses[email][emailChar] = '\0';
             currChar++;
          }
          currPerson->si_no = count;  //Assign a serial number
@@ -79,6 +91,18 @@ Status load_file(AddressBook *address_book)
 	}*/
    address_book->fp = fp;
    fclose(fp);
+   /*for(int i = 0; i < address_book->count; i++){
+        printf("Name %d: %s\n", i+1, address_book->list[i].name[0]);
+        for(int k = 0; k < PHONE_NUMBER_COUNT; k++){
+            printf("Phone %d: %s\n", k+1, address_book->list[i].phone_numbers[k]);
+        }
+        for(int j = 0; j < EMAIL_ID_COUNT; j++){
+            printf("Email %d: %s\n", j+1, address_book->list[i].email_addresses[j]);
+        }
+        printf("Serial ID: %d\n", address_book->list[i].si_no);
+        printf("\n");
+    }
+    sleep(5);*/
 	return e_success;
 }
 
