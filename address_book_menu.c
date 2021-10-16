@@ -662,29 +662,29 @@ Status delete_contact(AddressBook *address_book)
       case NAME :
          /* searches by name */
          printf("Enter the Name: ");
-         char * name;
-         scanf("%s", &name);
+         char name[NAME_LEN];
+         scanf("%s", name);
          endStat2 = search(name, address_book, 0, NAME, Msg, e_search);
          break;
       case NUMBER :
          /* searches by number */
          printf("Enter the Phone Number: ");
-         char * number;
+         char number[NUMBER_LEN];
          scanf("%s", number);
          endStat2 = search(number, address_book, 0, NUMBER, Msg, e_search);
          break;
       case EMAIL :
          /* searches by email */
          printf("Enter the Email ID: ");
-         char * email;
+         char email[EMAIL_ID_LEN];
          scanf("%s", email);
          endStat2 = search(email, address_book, 0, EMAIL, Msg, e_search);
          break;
       case SERIAL :
          /* searches by serial number */
          printf("Enter the Serial Number: ");
-         char * sno;
-         scanf("%s", &sno);
+         char sno[10];
+         scanf("%s", sno);
          endStat2 = search(sno, address_book, 0, SERIAL, Msg, e_search);
          break;
       default :
@@ -711,14 +711,14 @@ Status delete_contact(AddressBook *address_book)
       } 
    }
    fflush(stdin);
-
    userOpt2 = get_option(CHAR, "Enter 'Y' to delete. [Press any other key to ignore]: ");
    /* Deletes person from array if chosen, otherwise goes back to start */
    if(userOpt2 == 'Y')
    {
       /* Find final Serial Number */
       int i = 0;
-      while(address_book->list[i].si_no != 0 && address_book->list[i].si_no != NULL)
+ 
+      while((address_book->list[i].si_no != 0) && (i < address_book->count))
       {
          i++;
       }
@@ -735,7 +735,7 @@ Status delete_contact(AddressBook *address_book)
          } while (chosenSNO < finalSNO);
       }
       /* Reallocates size of list to delete the final contact*/
-      ContactInfo* newSize = realloc(address_book->list, (chosenSNO)*sizeof(ContactInfo));
+      ContactInfo* newSize = realloc(address_book->list, ((address_book->count) - 1)*sizeof(ContactInfo));
       address_book->list = newSize;
       address_book->count--;
       printf("Successfully deleted Contact.\n");
