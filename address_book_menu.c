@@ -73,6 +73,9 @@ Status list_contacts(AddressBook *address_book, const char *title, int *index, c
    ContactInfo * contactInfoPtr = address_book->list;
    ContactInfo * endPtr = contactInfoPtr + address_book->count;
 
+   //allows for quiting later
+   char quit;
+
     //print collumns
     for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
       printf("=");
@@ -134,6 +137,16 @@ Status list_contacts(AddressBook *address_book, const char *title, int *index, c
 
         printf("\n");
     }
+
+    //allows users to see list until they hit 'q'
+   
+   while (quit != 'q')
+   {
+      printf("Enter 'q' when done\n");
+      getchar();
+      scanf("%c", &quit);
+   }
+
 
 	return e_success;
 }
@@ -506,7 +519,12 @@ Status edit_contact(AddressBook *address_book)
    char * quitMsg = "Press: [q] | Cancel: ";
 
    printf("Which contact would you like to edit?\n");
-   search_contact(address_book, e_edit); //uses search contact to search and print contact
+   Status check = search_contact(address_book, e_edit); //uses search contact to search and print contact
+   //check back
+   if(check == e_back){
+      return e_back;
+   }
+
 
    printf("Please enter the serial number of the contact\n");
    scanf("%d", &sino);
@@ -523,9 +541,9 @@ Status edit_contact(AddressBook *address_book)
    int searchOption = get_option(NUM, "Please select an option: ");
 
    //React to user choice
-   if (searchOption == 0)
+   if (searchOption == 0){
       return e_back;
-   else if (searchOption == NAME)
+   }else if (searchOption == NAME)
    {
       printf("What would you like to change the name to?\n ");
       scanf("%s", &stringToChange);
