@@ -322,7 +322,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 {
    
 	menu_header("Search Result:\n");
-   printf("String: %s\n", str);
+
    //Print column names
    for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
       printf("=");
@@ -509,7 +509,7 @@ Status edit_contact(AddressBook *address_book)
    search_contact(address_book, e_edit); //uses search contact to search and print contact
 
    printf("Please enter the serial number of the contact\n");
-   scanf("%d", sino);
+   scanf("%d", &sino);
 
    contactToEdit= getContactAddress(address_book, sino);
 
@@ -535,8 +535,8 @@ Status edit_contact(AddressBook *address_book)
    } else if (searchOption == NUMBER) {
 
       printf("Would you like to change a phone number? (y/n)\n");
+      getchar();
       scanf("%c", &yn);
-
       while(yn == 'y' || yn =='Y'){
       printf("Which phone number would you like to change?\n");
       for(int i = 0; i<PHONE_NUMBER_COUNT; i++){
@@ -565,6 +565,7 @@ Status edit_contact(AddressBook *address_book)
 
    } else if (searchOption == EMAIL) {
       printf("Would you like to change an email address? (y/n)\n");
+      getchar();
       scanf("%c", &yn);
 
       while(yn == 'y' || yn =='Y'){
@@ -579,7 +580,7 @@ Status edit_contact(AddressBook *address_book)
 
       strcpy(contactToEdit->email_addresses[indexToChange - 1], stringToChange);
 
-      printf("Updated phone numbers: \n");
+      printf("Updated email adresses: \n");
       for(int i = 0; i<EMAIL_ID_COUNT; i++){
          printf("Name: %s, Email address %d: %s\n", contactToEdit->name[0], i+1, contactToEdit->email_addresses[i]);
       }
@@ -589,7 +590,7 @@ Status edit_contact(AddressBook *address_book)
       printf("Would you like to change another email address? (y/n)\n");
 
       getchar();
-      scanf("%c%*c", &yn);
+      scanf("%c", &yn);
       }
 
    }
