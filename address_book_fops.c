@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <ctype.h>
@@ -83,26 +83,8 @@ Status load_file(AddressBook *address_book)
          address_book->count = count; //Update the count
       }
 	}
-	/*else  //No file found
-	{
-      fp = fopen(DEFAULT_FILE, "w"); //Create a file
-      address_book->count = 0;
-      address_book->fp = fp;
-	}*/
    address_book->fp = fp;
    fclose(fp);
-   /*for(int i = 0; i < address_book->count; i++){
-        printf("Name %d: %s\n", i+1, address_book->list[i].name[0]);
-        for(int k = 0; k < PHONE_NUMBER_COUNT; k++){
-            printf("Phone %d: %s\n", k+1, address_book->list[i].phone_numbers[k]);
-        }
-        for(int j = 0; j < EMAIL_ID_COUNT; j++){
-            printf("Email %d: %s\n", j+1, address_book->list[i].email_addresses[j]);
-        }
-        printf("Serial ID: %d\n", address_book->list[i].si_no);
-        printf("\n");
-    }
-    sleep(5);*/
 	return e_success;
 }
 
