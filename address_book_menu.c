@@ -403,18 +403,13 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
             printf("=");
       }
    }
-   printf("Right before msg\n");
    printf("%s", msg);
-   printf("Right after msg\n");
    sleep(2);
    if (foundPeople > 0){
-      printf("e_success\n");
       return e_success;
    }else if (foundPeople < 0){
-      printf("e_fail\n");
       return e_fail;
    }
-   printf("e_no_match\n");
    return e_no_match;
 }
 
@@ -493,15 +488,9 @@ Status search_contact(AddressBook *address_book, Modes comingFrom)
    else
       endStat = e_fail;
 
-   printf("Before char opt\n");
-   sleep(2);
    fflush(stdin);
-   char opt = get_option(CHAR, "Enter q to quit\n");
-   printf("After char opt\n");
-   sleep(2);
+   char opt = get_option(CHAR, "\nEnter q to quit\n");
    if (opt == 'q'){
-      printf("opt = q\n");
-      printf("Endstat: %d\n", endStat);
       return endStat;
    }
    return e_back;
