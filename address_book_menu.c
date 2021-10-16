@@ -3,7 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+#define sleep Sleep
+#define clear "cls"
+#else
 #include <unistd.h>
+#define clear "clear"
+#endif
 
 // #include "abk_fileops.h"
 // #include "abk_log.h"
@@ -11,6 +19,7 @@
 // #include "abk.h"
 #include "address_book.h"
 #include "address_book_menu.h"
+#include "address_book_fops.h"
 
 int get_option(int type, const char *msg)
 {
@@ -18,13 +27,17 @@ int get_option(int type, const char *msg)
    switch (type)
    {
       case NUM:
+      {
          int opt;
          scanf("%d", &opt);
          return opt;
+      }
       case CHAR:
+      {
          char opt;
          scanf("%c", &opt);
          return opt;
+      }
       case NONE:
          return e_no_opt;
    }
@@ -129,7 +142,7 @@ void menu_header(const char *str)
 {
 	fflush(stdout);
 
-	system("clear");
+	system(clear);
 
 	printf("#######  Address Book  #######\n");
 	if (*str != '\0')
@@ -175,10 +188,10 @@ Status menu(AddressBook *address_book)
 		switch (option)
 		{
 			case e_add_contact:
-				/* Add your implementation to call add_contacts function here */
+				add_contacts(address_book);
 				break;
 			case e_search_contact:
-				search_contact(address_book);
+				search_contact(address_book, e_search);
 				break;
 			case e_edit_contact:
 				edit_contact(address_book);
@@ -187,8 +200,8 @@ Status menu(AddressBook *address_book)
 				delete_contact(address_book);
 				break;
 			case e_list_contacts:
+            list_contacts(address_book, "Contacts", 0, "Press: [q] | Cancel", e_list);
 				break;
-				/* Add your implementation to call list_contacts function here */
 			case e_save:
 				save_file(address_book);
 				break;
@@ -291,7 +304,6 @@ Status add_contacts(AddressBook *address_book){
    //Assign serial id based on address_book->count variable
    newContact.si_no = address_book->count;
 
-   printf("List size before realloc(): %zu\n", malloc_size(address_book->list));
    ContactInfo* tempPtr = realloc(address_book->list, (address_book->count)*sizeof(ContactInfo));
    if(tempPtr == NULL){
       printf("Memory reallocation failed! Please try to add contact again later.\n");
@@ -347,7 +359,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 
          //Print name
          printf(": %s", ptrToPeople->name);
-         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->name); spaces++)
+         for (int spaces = 0; spaces < 32 - strlen(ptrToPeople->name[0]); spaces++)
             printf(" ");
          
          //Print phone number 1
@@ -385,7 +397,7 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 }
 
 //Allows for an easy comparison in search()
-static int compareFields(int field, const char * toCheck, ContactInfo * contact)
+int compareFields(int field, const char * toCheck, ContactInfo * contact)
 {
    switch (field)
    {
@@ -411,7 +423,7 @@ static int compareFields(int field, const char * toCheck, ContactInfo * contact)
    return -1;
 }
 
-Status search_contact(AddressBook *address_book)
+Status search_contact(AddressBook *address_book, Modes comingFrom)
 {
    Status endStat;
    //Create a search menu
@@ -433,28 +445,28 @@ Status search_contact(AddressBook *address_book)
       printf("Enter the Name: ");
       char * name;
       scanf("%s", &name);
-      endStat = search(name, address_book, 0, NAME, "", e_search);
+      endStat = search(name, address_book, 0, NAME, "", comingFrom);
    }
    else if (searchOption == NUMBER)
    {
       printf("Enter the Phone Number: ");
       char * number;
       scanf("%s", number);
-      endStat = search(number, address_book, 0, NUMBER, "", e_search);
+      endStat = search(number, address_book, 0, NUMBER, "", comingFrom);
    }
    else if (searchOption == EMAIL)
    {
       printf("Enter the Email ID: ");
       char * email;
       scanf("%s", email);
-      endStat = search(email, address_book, 0, EMAIL, "", e_search);
+      endStat = search(email, address_book, 0, EMAIL, "", comingFrom);
    }
    else if (searchOption == SERIAL)
    {
       printf("Enter the Serial Number: ");
       char * sno;
       scanf("%s", &sno);
-      endStat = search(sno, address_book, 0, SERIAL, "", e_search);
+      endStat = search(sno, address_book, 0, SERIAL, "", comingFrom);
    }
    else
       endStat = e_fail;
@@ -475,7 +487,7 @@ Status edit_contact(AddressBook *address_book)
    char * quitMsg = "Press: [q] | Cancel: ";
 
    printf("Which contact would you like to edit?\n");
-   search_contact(address_book); //uses search contact to search and print contact
+   search_contact(address_book, e_edit); //uses search contact to search and print contact
 
    printf("Please enter the serial number of the contact\n");
    scanf("%d", sino);
@@ -685,7 +697,7 @@ Status delete_contact(AddressBook *address_book)
          } while (chosenSNO < finalSNO);
       }
       /* Reallocates size of list to delete the final contact*/
-      Contact* newSize = realloc(address_book->list, (chosenSNO)*sizeof(Contact));
+      ContactInfo* newSize = realloc(address_book->list, (chosenSNO)*sizeof(ContactInfo));
       address_book->list = newSize;
       address_book->count--;
       printf("Successfully deleted Contact.\n");
@@ -698,7 +710,7 @@ Status delete_contact(AddressBook *address_book)
 }
 
 //Gets the pointer to a contact, useful for deleting and editing
-*ContactInfo getContactAddress(AddressBook *addBook, int sno)
+ContactInfo* getContactAddress(AddressBook *addBook, int sno)
 {
    ContactInfo * ptr = addBook->list;
    ContactInfo * endPtr = addBook->list + addBook->count;
