@@ -320,8 +320,9 @@ Status add_contacts(AddressBook *address_book){
 
 Status search(const char *str, AddressBook *address_book, int loop_count, int field, const char *msg, Modes mode)
 {
+   
 	menu_header("Search Result:\n");
-
+   printf("String: %s\n", str);
    //Print column names
    for (int numOfEquals = 0; numOfEquals < 32 * 3 + 14; numOfEquals++)
       printf("=");
@@ -410,7 +411,7 @@ int compareFields(int field, const char * toCheck, ContactInfo * contact)
    switch (field)
    {
       case NAME:
-         return strcmp(&toCheck, contact->name[0]);
+         return strcmp(toCheck, contact->name[0]);
       case NUMBER:
          for (int phone = 0; phone < PHONE_NUMBER_COUNT; phone++)
          {
@@ -426,7 +427,7 @@ int compareFields(int field, const char * toCheck, ContactInfo * contact)
          }
          return 1;
       case SERIAL:
-         return atoi(&toCheck) != contact->si_no;
+         return atoi(toCheck) != contact->si_no;
    }
    return -1;
 }
@@ -451,28 +452,28 @@ Status search_contact(AddressBook *address_book, Modes comingFrom)
    else if (searchOption == NAME)
    {
       printf("Enter the Name: ");
-      char * name;
-      scanf("%s", &name);
+      char name[NAME_LEN];
+      scanf("%s", name);
       endStat = search(name, address_book, 0, NAME, "", comingFrom);
    }
    else if (searchOption == NUMBER)
    {
       printf("Enter the Phone Number: ");
-      char * number;
-      scanf("%s", number);
+      char number[NUMBER_LEN];
+      scanf("%s", &number);
       endStat = search(number, address_book, 0, NUMBER, "", comingFrom);
    }
    else if (searchOption == EMAIL)
    {
       printf("Enter the Email ID: ");
-      char * email;
+      char email[EMAIL_ID_LEN];
       scanf("%s", email);
       endStat = search(email, address_book, 0, EMAIL, "", comingFrom);
    }
    else if (searchOption == SERIAL)
    {
       printf("Enter the Serial Number: ");
-      char * sno;
+      char sno[10];
       scanf("%s", &sno);
       endStat = search(sno, address_book, 0, SERIAL, "", comingFrom);
    }
@@ -481,7 +482,7 @@ Status search_contact(AddressBook *address_book, Modes comingFrom)
 
    printf("Before char opt\n");
    sleep(2);
-   getchar();
+   fflush(stdin);
    char opt = get_option(CHAR, "Enter q to quit\n");
    printf("After char opt\n");
    sleep(2);
