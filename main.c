@@ -11,6 +11,7 @@ int main(void)
 {
 	AddressBook address_book;
 	Status ret;
+	address_book.count=0;
 
 	/* Load the file from .csv file if any */
 	ret = load_file(&address_book);
@@ -26,6 +27,6 @@ int main(void)
 			save_prompt(&address_book);
 		}
 	}
-
+	
 	return 0;
 }

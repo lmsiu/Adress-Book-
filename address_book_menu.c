@@ -140,7 +140,7 @@ Status list_contacts(AddressBook *address_book, const char *title, int *index, c
 
 void menu_header(const char *str)
 {
-	fflush(stdout);
+	//fflush(stdout);
 
 	system(clear);
 
@@ -203,6 +203,7 @@ Status menu(AddressBook *address_book)
             list_contacts(address_book, "Contacts", 0, "Press: [q] | Cancel", e_list);
 				break;
 			case e_save:
+            //printf("Save file\n");
 				save_file(address_book);
 				break;
 			case e_exit:

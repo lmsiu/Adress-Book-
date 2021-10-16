@@ -15,7 +15,7 @@ Status load_file(AddressBook *address_book)
    char contactBuff[len]; 
 
    //Try opening the file for reading
-   FILE * fp = fopen(DEFAULT_FILE, "r");
+   FILE * fp = fopen(DEFAULT_FILE, "a+");
 
 	if (!fp) //Make sure the pointer is not null
 	{
@@ -71,12 +71,13 @@ Status load_file(AddressBook *address_book)
          address_book->count = count; //Update the count
       }
 	}
-	else  //No file found
+	/*else  //No file found
 	{
       fp = fopen(DEFAULT_FILE, "w"); //Create a file
       address_book->count = 0;
       address_book->fp = fp;
-	}
+	}*/
+   address_book->fp = fp;
    fclose(fp);
 	return e_success;
 }
